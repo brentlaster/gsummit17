@@ -2,11 +2,11 @@
 // starting Jenkinsfile for Lab 1
 
 node ('worker_node1') {
-   stage('Source') {          
+   stage('Pull Source') {          
         // Get code from our git repository
 	checkout scm
    }
 
-// * 1. Add build stage below
+// * 1. Add Compile stage below
   
 }
