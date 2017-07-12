@@ -1,5 +1,5 @@
 #!groovy
-// Starting Jenkinsfile for Lab 5
+// Completed Jenkinsfile for Lab 5
 
 @Library('Utilities2')_
 node ('worker_node1') {
@@ -58,7 +58,7 @@ stage('Unit Test') {
     stage('Integration Test') {
 
         withCredentials([usernamePassword(credentialsId: 'mysql-access', passwordVariable: 'DBPASS', usernameVariable: 'DBUSER')]) {
-            sh "mysql -u${DBUSER} -p${DBPASS} registry_test < registry_test.sql"
+            sh "mysql -u${env.DBUSER} -p${env.DBPASS} registry_test < registry_test.sql"
         }
 
         gbuild3 'integrationTest' 
@@ -70,12 +70,18 @@ stage('Unit Test') {
 // * 1. Insert a step to invoke the sonarqube scanner with our sonarqube environment
 //         The scanner command is "sh '/opt/sonar-runner/bin/sonar-runner -X -e'
 
-       
+        withSonarQubeEnv('Local SonarQube') {
+
+            sh '/opt/sonar-runner/bin/sonar-runner -X -e'
+
+
+        }
+        
         timeout(time:5, unit:'MINUTES') {
 
 // * 2. Add a step that defines 'qg' and assigns it to wait for the quality gate webhook to be completed
 
-           
+            def qg = waitForQualityGate()
             if (qg.status != 'OK') {
                error "Pipeline aborted due to quality gate failure: ${qg.status}"
 
